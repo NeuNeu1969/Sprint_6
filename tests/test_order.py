@@ -17,7 +17,7 @@ class TestOrder:
     def test_order_scooter(self, driver, entry_button, dataset):
         # Открывает главную страницу
         home_page = HomePage(driver)
-        home_page.open(BASE_URL)
+        home_page.open_home_page(BASE_URL)
 
         # Нажимает кнопку "Заказать" (точка входа определяется параметром)
         home_page.click_order_button(entry_button)
@@ -35,17 +35,18 @@ class TestOrder:
         modal_text = order_page.get_success_modal_text()
         assert EXPECTED_SUCCESS_MODAL_HEADER in modal_text
 
-        # Переходит на страницу статуса заказа (там доступна шапка сайта без модального окна)
+        # Переходит на страницу статуса заказа
         order_page.click_view_status()
 
         # Проверяет переход на главную страницу по клику на логотип "Самоката"
         home_page.click_scooter_logo()
         assert home_page.get_current_url() == BASE_URL
 
-        # Проверяет, что логотип Яндекса открывает в новом окне домен Яндекса (редирект)
+        # Проверяет, что логотип Яндекса открывает в новом окне домен Яндекса
         original_window = home_page.get_window_handle()
         home_page.click_yandex_logo()
         home_page.switch_to_new_window()
+        home_page.wait_url_contains("yandex")
         assert "yandex" in home_page.get_current_url()
 
         # Закрывает окно Яндекса и возвращается в исходное окно
